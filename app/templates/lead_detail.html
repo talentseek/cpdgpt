@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Lead Details{% endblock %}
+
+{% block content %}
+<h1>Lead Details for {{ lead.email }}</h1>
+
+<!-- Lead Status -->
+<h2>Status: {{ lead.lead_status }}</h2>
+<form method="post" action="{{ url_for('lead_management.lead_detail', lead_id=lead.id) }}">
+    <label for="lead_status">Update Status:</label>
+    <select name="lead_status" id="lead_status">
+        <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
+        <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
+        <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
+        <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
+        <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
+        <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
+        <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
+        <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
+    </select>
+    <button type="submit">Update Status</button>
+</form>
+
+<!-- View in SmartLead Button -->
+{% if lead.is_in_smartlead %}
+    <h3>SmartLead</h3>
+    <a href="https://app.smartlead.ai/app/lead/{{ lead.sl_lead_id }}/view" target="_blank">
+        <button type="button">View in SmartLead</button>
+    </a>
+{% endif %}
+
+<!-- Lead Actions -->
+<h2>Actions</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Action Date</th>
+            <th>State</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for action in lead.actions %}
+        <tr>
+            <td>{{ action.action_type }}</td>
+            <td>{{ action.action_description }}</td>
+            <td>{{ action.action_date.strftime('%Y-%m-%d') if action.action_date else 'N/A' }}</td>
+            <td>{{ action.action_state }}</td>
+            <td>
+                {% if action.action_state != 'Done' %}
+                    <form method="post" action="{{ url_for('lead_management.complete_action', action_id=action.id) }}">
+                        <button type="submit">Mark as Done</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Add New Action -->
+<h3>Add New Action</h3>
+<form method="post" action="{{ url_for('lead_management.add_action', lead_id=lead.id) }}">
+    <label for="action_type">Type:</label>
+    <input type="text" name="action_type" id="action_type" required>
+    <label for="action_description">Description:</label>
+    <input type="text" name="action_description" id="action_description">
+    <label for="action_date">Date (YYYY-MM-DD):</label>
+    <input type="text" name="action_date" id="action_date">
+    <button type="submit">Add Action</button>
+</form>
+
+<!-- Lead Notes -->
+<h2>Notes</h2>
+<ul>
+    {% for note in lead.notes %}
+    <li>{{ note.created_at.strftime('%Y-%m-%d') }}: {{ note.note }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Add New Note -->
+<h3>Add Note</h3>
+<form method="post" action="{{ url_for('lead_management.add_note', lead_id=lead.id) }}">
+    <label for="note">Note:</label>
+    <textarea name="note" id="note" required></textarea>
+    <button type="submit">Add Note</button>
+</form>
+
+{% endblock %}

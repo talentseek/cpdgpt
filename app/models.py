@@ -28,6 +28,7 @@ class Campaign(db.Model):
 class Lead(db.Model):
     __tablename__ = 'leads'
     id = db.Column(db.Integer, primary_key=True)
+    sl_lead_id = db.Column(db.Integer, nullable=True)  # Smartlead Lead ID
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)  # Unique email to prevent duplicates.
@@ -38,15 +39,17 @@ class Lead(db.Model):
     location = db.Column(db.String(255), nullable=True)
     linkedin_profile = db.Column(db.String(255), nullable=True)
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'), nullable=False)  # ForeignKey to Campaign.
+    lead_status = db.Column(db.String(255), nullable=False, default='Interested - Initial Info Requested')  # New field for lead status.
 
-    # A lead can have multiple actions and notes.
-    actions = db.relationship('LeadAction', backref='lead', lazy=True)
-    notes = db.relationship('LeadNote', backref='lead', lazy=True)
+    # A lead can have multiple actions and notes, with cascade delete enabled
+    actions = db.relationship('LeadAction', backref='lead', lazy=True, cascade='all, delete-orphan')
+    notes = db.relationship('LeadNote', backref='lead', lazy=True, cascade='all, delete-orphan')
 
     # Method to convert lead data to a dictionary.
     def to_dict(self):
         return {
             'id': self.id,
+            'sl_lead_id': self.sl_lead_id,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
@@ -56,8 +59,16 @@ class Lead(db.Model):
             'phone_number': self.phone_number,
             'location': self.location,
             'linkedin_profile': self.linkedin_profile,
-            'campaign_id': self.campaign_id
+            'campaign_id': self.campaign_id,
+            'lead_status': self.lead_status,
+            'actions': [action.to_dict() for action in self.actions],
+            'notes': [note.to_dict() for note in self.notes],
+            'is_in_smartlead': self.sl_lead_id is not None  # Ensure this correctly checks if it's in Smartlead
         }
+
+    @property
+    def is_in_smartlead(self):
+        return self.sl_lead_id is not None
 
 # LeadAction model - represents actions taken on a lead (e.g., contacting them, marking as demo).
 class LeadAction(db.Model):
@@ -66,7 +77,21 @@ class LeadAction(db.Model):
     lead_id = db.Column(db.Integer, db.ForeignKey('leads.id'), nullable=False)  # ForeignKey to Lead.
     action_type = db.Column(db.String(255), nullable=False)  # Action type (e.g., 'Contacted', 'Demo Booked').
     action_description = db.Column(db.Text, nullable=True)  # Optional description of the action.
+    action_date = db.Column(db.DateTime, nullable=True)  # Date for when the action should be completed.
+    action_state = db.Column(db.String(50), nullable=False, default='To do')  # State of the action ('Done' or 'To do').
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Method to convert action data to a dictionary.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'lead_id': self.lead_id,
+            'action_type': self.action_type,
+            'action_description': self.action_description,
+            'action_date': self.action_date,
+            'action_state': self.action_state,
+            'created_at': self.created_at
+        }
 
 # LeadNote model - represents additional notes added to a lead.
 class LeadNote(db.Model):
@@ -75,3 +100,12 @@ class LeadNote(db.Model):
     lead_id = db.Column(db.Integer, db.ForeignKey('leads.id'), nullable=False)  # ForeignKey to Lead.
     note = db.Column(db.Text, nullable=False)  # The note content itself.
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Method to convert note data to a dictionary.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'lead_id': self.lead_id,
+            'note': self.note,
+            'created_at': self.created_at
+        }

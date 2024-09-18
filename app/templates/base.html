@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Action Management{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-title">Action Management</div>
+        <div class="nav-links">
+            <a href="{{ url_for('lead_management.all_actions') }}" id="all-actions">All Actions</a>
+            <a href="{{ url_for('lead_management.due_today') }}" id="due-today">Due Today</a>
+            <a href="{{ url_for('lead_management.overdue') }}" id="overdue">Overdue</a>
+            <a href="{{ url_for('lead_management.upcoming') }}" id="upcoming">Upcoming</a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h3>Filters</h3>
+        <form action="{{ url_for('lead_management.filter_leads') }}" method="get">
+            <div class="filter-section">
+                <label for="client_name">Client Name:</label>
+                <input type="text" name="client_name" id="client_name" placeholder="Enter client name">
+            </div>
+            <div class="filter-section">
+                <label for="lead_status">Lead Status:</label>
+                <select name="lead_status" id="lead_status">
+                    <option value="" disabled selected>Select Status</option>
+                    <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
+                    <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
+                    <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
+                    <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
+                    <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
+                    <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
+                    <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
+                    <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
+                </select>
+            </div>
+            <button type="submit">Apply Filters</button>
+        </form>
+        <ul>
+            <li><a href="{{ url_for('lead_management.display_stored_leads') }}" id="display-all-leads">Display All Leads</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

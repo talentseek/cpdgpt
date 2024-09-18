@@ -1,8 +1,8 @@
-"""empty message
+"""Initial migration
 
-Revision ID: f1584d13419b
+Revision ID: 4e7b36c70599
 Revises: 
-Create Date: 2024-09-13 13:03:37.184349
+Create Date: 2024-09-17 14:05:39.215056
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f1584d13419b'
+revision = '4e7b36c70599'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,6 +36,7 @@ def upgrade():
     )
     op.create_table('leads',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sl_lead_id', sa.Integer(), nullable=True),
     sa.Column('first_name', sa.String(length=255), nullable=False),
     sa.Column('last_name', sa.String(length=255), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
@@ -46,6 +47,7 @@ def upgrade():
     sa.Column('location', sa.String(length=255), nullable=True),
     sa.Column('linkedin_profile', sa.String(length=255), nullable=True),
     sa.Column('campaign_id', sa.Integer(), nullable=False),
+    sa.Column('lead_status', sa.String(length=255), nullable=False),
     sa.ForeignKeyConstraint(['campaign_id'], ['campaigns.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
@@ -55,6 +57,8 @@ def upgrade():
     sa.Column('lead_id', sa.Integer(), nullable=False),
     sa.Column('action_type', sa.String(length=255), nullable=False),
     sa.Column('action_description', sa.Text(), nullable=True),
+    sa.Column('action_date', sa.DateTime(), nullable=True),
+    sa.Column('action_state', sa.String(length=50), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['lead_id'], ['leads.id'], ),
     sa.PrimaryKeyConstraint('id')

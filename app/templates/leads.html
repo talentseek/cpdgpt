@@ -1,38 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stored Leads</title>
-</head>
-<body>
-    <h1>Leads List</h1>
+{% extends 'base.html' %}
 
-    {% if leads %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Lead ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Company Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lead in leads %}
-                <tr>
-                    <td>{{ lead.id }}</td>
-                    <td>{{ lead.first_name }}</td>
-                    <td>{{ lead.last_name }}</td>
-                    <td>{{ lead.email }}</td>
-                    <td>{{ lead.company_name }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No leads found.</p>
-    {% endif %}
-</body>
-</html>
+{% block title %}Leads{% endblock %}
+
+{% block content %}
+<h1>Leads List</h1>
+
+<!-- Add New Lead (Not in Smartlead) -->
+<h3>Add New Lead (Not in Smartlead)</h3>
+<form method="post" action="{{ url_for('lead_management.add_lead') }}">
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="first_name">First Name:</label>
+    <input type="text" name="first_name" id="first_name" required>
+
+    <label for="last_name">Last Name:</label>
+    <input type="text" name="last_name" id="last_name" required>
+
+    <label for="company_name">Company Name:</label>
+    <input type="text" name="company_name" id="company_name">
+
+    <label for="lead_status">Lead Status:</label>
+    <select name="lead_status" id="lead_status">
+        <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
+        <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
+        <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
+        <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
+        <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
+        <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
+        <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
+        <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
+    </select>
+
+    <button type="submit">Add Lead</button>
+</form>
+
+{% if leads %}
+    <table>
+        <thead>
+            <tr>
+                <th>Lead ID</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Company Name</th>
+                <th>Lead Status</th> <!-- New column added -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in leads %}
+            <tr>
+                <td>{{ lead.id }}</td>
+                <td><a href="{{ url_for('lead_management.lead_detail', lead_id=lead.id) }}">{{ lead.email }}</a></td> <!-- Link to individual lead page -->
+                <td>{{ lead.first_name }}</td>
+                <td>{{ lead.last_name }}</td>
+                <td>{{ lead.company_name }}</td>
+                <td>{{ lead.lead_status }}</td> <!-- Display lead status -->
+                <td>
+                    <ul>
+                        {% for action in lead.actions %}
+                            <li>{{ action.action_type }}: {{ action.action_state }} ({{ action.action_date.strftime('%Y-%m-%d') if action.action_date else 'N/A' }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No leads found.</p>
+{% endif %}
+{% endblock %}

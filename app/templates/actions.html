@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Actions{% endblock %}
+
+{% block content %}
+<h1>Actions</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Lead Email</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Action Date</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for action in actions %}
+        <tr>
+            <td>{{ action.id }}</td>
+            <td><a href="{{ url_for('lead_management.lead_detail', lead_id=action.lead.id) }}">{{ action.lead.email }}</a></td>
+            <td>{{ action.action_type }}</td>
+            <td>{{ action.action_description }}</td>
+            <td>
+                {% if action.action_date %}
+                    {{ action.action_date.strftime('%Y-%m-%d') }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ action.action_state }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
