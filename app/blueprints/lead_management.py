@@ -162,6 +162,50 @@ def add_action(lead_id):
         db.session.rollback()
         return jsonify({"error": f"Failed to add action: {str(e)}"}), 500
 
+# Route to edit an action
+@lead_management_blueprint.route('/edit_action/<int:action_id>', methods=['POST'])
+def edit_action(action_id):
+    action = LeadAction.query.get(action_id)
+    if not action:
+        return jsonify({"error": "Action not found"}), 404
+
+    action_type = request.form.get('action_type')
+    action_description = request.form.get('action_description')
+    action_date = request.form.get('action_date')
+
+    if action_type:
+        action.action_type = action_type
+    if action_description:
+        action.action_description = action_description
+    if action_date:
+        try:
+            action.action_date = datetime.strptime(action_date, "%Y-%m-%d")
+        except ValueError:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+
+    try:
+        db.session.commit()
+        return redirect(url_for('lead_management.lead_detail', lead_id=action.lead_id))
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to edit action: {str(e)}"}), 500
+
+# Route to delete an action by ID
+@lead_management_blueprint.route('/delete_action/<int:action_id>', methods=['POST'])
+def delete_action(action_id):
+    action = LeadAction.query.get(action_id)
+
+    if not action:
+        return jsonify({"error": "Action not found"}), 404
+
+    try:
+        db.session.delete(action)
+        db.session.commit()
+        return redirect(url_for('lead_management.lead_detail', lead_id=action.lead_id))
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete action: {str(e)}"}), 500
+
 # Route to add a note to a lead
 @lead_management_blueprint.route('/add_note/<int:lead_id>', methods=['POST'])
 def add_note(lead_id):
@@ -184,6 +228,40 @@ def add_note(lead_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Failed to add note: {str(e)}"}), 500
+
+# Route to edit a note
+@lead_management_blueprint.route('/edit_note/<int:note_id>', methods=['POST'])
+def edit_note(note_id):
+    note = LeadNote.query.get(note_id)
+    if not note:
+        return jsonify({"error": "Note not found"}), 404
+
+    note_content = request.form.get('note')
+    if note_content:
+        note.note = note_content
+
+    try:
+        db.session.commit()
+        return redirect(url_for('lead_management.lead_detail', lead_id=note.lead_id))
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to edit note: {str(e)}"}), 500
+
+# Route to delete a note by ID
+@lead_management_blueprint.route('/delete_note/<int:note_id>', methods=['POST'])
+def delete_note(note_id):
+    note = LeadNote.query.get(note_id)
+
+    if not note:
+        return jsonify({"error": "Note not found"}), 404
+
+    try:
+        db.session.delete(note)
+        db.session.commit()
+        return redirect(url_for('lead_management.lead_detail', lead_id=note.lead_id))
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete note: {str(e)}"}), 500
 
 # Route to update a lead's status
 @lead_management_blueprint.route('/update_lead_status/<int:lead_id>', methods=['POST'])
@@ -295,19 +373,3 @@ def delete_lead(lead_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Failed to delete lead: {str(e)}"}), 500
-
-# Route to delete an action by ID
-@lead_management_blueprint.route('/delete_action/<int:action_id>', methods=['POST'])
-def delete_action(action_id):
-    action = LeadAction.query.get(action_id)
-
-    if not action:
-        return jsonify({"error": "Action not found"}), 404
-
-    try:
-        db.session.delete(action)
-        db.session.commit()
-        return redirect(url_for('lead_management.lead_detail', lead_id=action.lead_id))
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Failed to delete action: {str(e)}"}), 500
