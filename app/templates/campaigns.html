@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Campaigns{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Campaigns List</h1>
+    
+    <!-- Add Campaign Dropdown Button -->
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="addCampaignDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Add Campaign
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="addCampaignDropdown">
+            <li><a class="dropdown-item" href="#">Import Existing Campaign</a></li>
+            <li><a class="dropdown-item" href="#">Create New Campaign</a></li>
+        </ul>
+    </div>
+</div>
+
+{% if campaigns %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Campaign Name</th>
+                <th>Description</th>
+                <th>Client Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for campaign in campaigns %}
+            <tr>
+                <td>{{ campaign.id }}</td>
+                <td>{{ campaign.name }}</td>
+                <td>{{ campaign.description or 'No description available' }}</td>
+                <td>{{ campaign.client.business_name if campaign.client else 'No client associated' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No campaigns found.</p>
+{% endif %}
+{% endblock %}

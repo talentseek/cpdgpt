@@ -9,8 +9,9 @@ class Client(db.Model):
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # A client can have multiple campaigns.
+    # A client can have multiple campaigns and SDRs.
     campaigns = db.relationship('Campaign', backref='client', lazy=True)
+    sdrs = db.relationship('SDR', backref='client', lazy=True)  # New relationship for SDRs
 
 # Campaign model - represents a specific marketing campaign for a client.
 class Campaign(db.Model):
@@ -23,6 +24,26 @@ class Campaign(db.Model):
 
     # A campaign can have multiple leads.
     leads = db.relationship('Lead', backref='campaign', lazy=True)
+
+# SDR model - represents Sales Development Representatives linked to a client.
+class SDR(db.Model):
+    __tablename__ = 'sdrs'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    title = db.Column(db.String(100), nullable=True)
+    calendar_link = db.Column(db.String(255), nullable=True)
+    rules = db.Column(db.Text, nullable=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=False)  # ForeignKey to Client.
+
+# Detailed Description
+class DetailedDescription(db.Model):
+    __tablename__ = 'detailed_descriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=False)  # ForeignKey to Client.
+    description = db.Column(db.Text, nullable=False)  # The detailed description content itself.
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Lead model - represents a lead or prospect that is part of a campaign.
 class Lead(db.Model):
@@ -63,7 +84,7 @@ class Lead(db.Model):
             'lead_status': self.lead_status,
             'actions': [action.to_dict() for action in self.actions],
             'notes': [note.to_dict() for note in self.notes],
-            'is_in_smartlead': self.sl_lead_id is not None  # Ensure this correctly checks if it's in Smartlead
+            'is_in_smartlead': self.sl_lead_id is not None
         }
 
     @property

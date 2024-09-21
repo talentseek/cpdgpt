@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Contracts & Billing{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('client_management.display_clients') }}">Clients</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('client_management.client_detail', client_id=client.id) }}">{{ client.business_name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contracts & Billing</li>
+    </ol>
+</nav>
+
+<h1>Contracts & Billing for {{ client.business_name }}</h1>
+<p>Details about contracts and billing will go here.</p>
+{% endblock %}
