@@ -5,28 +5,28 @@ from app.models import Client, Campaign
 app = create_app()
 
 with app.app_context():
-    # Create a new client
-    justpark = Client(
-        business_name="JustPark",
-        description="A platform for finding and booking parking spaces."
+    # Create a new client for MailMonitor
+    mailmonitor = Client(
+        business_name="MailMonitor",
+        description="Email deliverability app."
     )
     
     # Add the client to the session
-    db.session.add(justpark)
+    db.session.add(mailmonitor)
     db.session.commit()  # Commit to generate an ID for the client
 
     # List of campaign IDs for the client
-    campaign_ids = [606501, 511787, 263858, 232487, 174746, 151975, 138773, 2]
+    campaign_ids = [601254, 601253, 511819, 440935, 440873, 274723, 176021, 125526]
 
     # Create and add campaigns for the client
     for campaign_id in campaign_ids:
         campaign = Campaign(
             id=campaign_id,  # Set the campaign ID
             name=f"Campaign {campaign_id}",
-            client_id=justpark.id  # Associate with the JustPark client
+            client_id=mailmonitor.id  # Associate with the MailMonitor client
         )
         db.session.add(campaign)
 
     # Commit all changes to the database
     db.session.commit()
-    print(f"Client 'JustPark' and its campaigns have been added to the database.")
+    print(f"Client 'MailMonitor' and its campaigns have been added to the database.")

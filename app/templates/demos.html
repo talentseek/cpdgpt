@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Demo Management{% endblock %}
+
+{% block content %}
+<h1>Demo Bookings</h1>
+
+<!-- Table to display demo bookings -->
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Client</th>
+            <th>Lead</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for demo in demos %}
+        <tr>
+            <td>{{ demo.title }}</td>
+            <td>{{ demo.client.business_name }}</td> <!-- Assuming 'client' relationship is established -->
+            <td>
+                {% if demo.lead %}
+                    <a href="{{ url_for('lead_management.lead_detail', lead_id=demo.lead.id) }}">{{ demo.lead.email }}</a> <!-- Link to lead details if lead exists -->
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ demo.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ demo.end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ demo.status }}</td>
+            <td>{{ demo.location }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

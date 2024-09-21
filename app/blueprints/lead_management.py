@@ -95,7 +95,6 @@ def add_lead():
 
     return redirect(url_for('lead_management.display_stored_leads'))
 
-# Route to view and manage a specific lead
 @lead_management_blueprint.route('/lead/<int:lead_id>', methods=['GET', 'POST'])
 def lead_detail(lead_id):
     lead = Lead.query.get(lead_id)
@@ -103,11 +102,13 @@ def lead_detail(lead_id):
         return jsonify({"error": "Lead not found"}), 404
 
     if request.method == 'POST':
-        # Update lead status
+        # Get the new status from the form data
         new_status = request.form.get('lead_status')
+
         if new_status:
             lead.lead_status = new_status
             db.session.commit()
+            return redirect(url_for('lead_management.lead_detail', lead_id=lead.id))
 
     return render_template('lead_detail.html', lead=lead)
 
@@ -291,11 +292,19 @@ def get_stored_leads():
     lead_data = [lead.to_dict() for lead in leads]  # Use the to_dict() method
     return jsonify(lead_data), 200
 
-# Route to display stored leads in an HTML table
+# Route to display stored leads and populate client names
 @lead_management_blueprint.route('/display_leads', methods=['GET'])
 def display_stored_leads():
-    leads = Lead.query.all()  # Retrieve all leads from the database
-    return render_template('leads.html', leads=leads)  # Make sure to pass leads to the template
+    # Fetch all distinct client names
+    clients = Client.query.with_entities(Client.business_name).distinct().all()
+    
+    # Ensure clients are processed into a proper list of names
+    clients_list = [client.business_name for client in clients]
+
+    # Fetch all leads to display
+    leads = Lead.query.all()
+
+    return render_template('leads.html', leads=leads, clients=clients_list)
 
 # Route to display all actions with optional filtering by action state
 @lead_management_blueprint.route('/all_actions', methods=['GET'])

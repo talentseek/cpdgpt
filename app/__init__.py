@@ -6,6 +6,7 @@ from app.blueprints.fetch_lead_message_history import fetch_lead_message_history
 from app.blueprints.reply_to_lead import reply_to_lead_blueprint
 from app.blueprints.update_lead_category import update_lead_category_blueprint
 from app.blueprints.lead_management import lead_management_blueprint
+from app.blueprints.client_management import client_management_blueprint
 from app.config import Config
 
 def create_app():
@@ -23,5 +24,6 @@ def create_app():
     app.register_blueprint(reply_to_lead_blueprint)
     app.register_blueprint(update_lead_category_blueprint)
     app.register_blueprint(lead_management_blueprint, url_prefix='/lead_management')
+    app.register_blueprint(client_management_blueprint)
 
     return app

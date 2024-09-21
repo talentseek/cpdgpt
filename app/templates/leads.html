@@ -3,75 +3,156 @@
 {% block title %}Leads{% endblock %}
 
 {% block content %}
-<h1>Leads List</h1>
-
-<!-- Add New Lead (Not in Smartlead) -->
-<h3>Add New Lead (Not in Smartlead)</h3>
-<form method="post" action="{{ url_for('lead_management.add_lead') }}">
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="email" required>
-
-    <label for="first_name">First Name:</label>
-    <input type="text" name="first_name" id="first_name" required>
-
-    <label for="last_name">Last Name:</label>
-    <input type="text" name="last_name" id="last_name" required>
-
-    <label for="company_name">Company Name:</label>
-    <input type="text" name="company_name" id="company_name">
-
-    <label for="campaign_id">Campaign ID:</label>
-    <input type="number" name="campaign_id" id="campaign_id" required> <!-- Re-added campaign_id -->
-
-    <label for="lead_status">Lead Status:</label>
-    <select name="lead_status" id="lead_status">
-        <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
-        <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
-        <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
-        <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
-        <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
-        <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
-        <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
-        <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
-    </select>
-
-    <button type="submit">Add Lead</button>
+<!-- Add New Lead Button -->
+<div class="row">
+<div class="col-md-6">
+<div class="text-end mt-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLeadModal">
+        Add New Lead
+    </button>
+</div>
+</div>
+<div class="col-md-6">
+<!-- Display All Leads Button -->
+<div class="text-end mt-3">
+    <a href="{{ url_for('lead_management.display_stored_leads') }}" class="btn btn-secondary">Display All Leads</a>
+</div>
+</div>
+</div>
+<form action="{{ url_for('lead_management.filter_leads') }}" method="get" class="mb-4">
+    <div class="row">
+        <!-- Client Name Dropdown -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="client_name">Client Name:</label>
+                <select name="client_name" id="client_name" class="form-control">
+                    <option value="" disabled selected>Select Client</option>
+                    {% for client in clients %}
+                        <option value="{{ client }}">{{ client }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <!-- Lead Status Dropdown -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="lead_status">Lead Status:</label>
+                <select name="lead_status" id="lead_status" class="form-control">
+                    <option value="" disabled selected>Select Status</option>
+                    <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
+                    <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
+                    <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
+                    <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
+                    <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
+                    <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
+                    <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
+                    <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </div>
 </form>
 
+<!-- Add New Lead Modal -->
+<div class="modal fade" id="addLeadModal" tabindex="-1" aria-labelledby="addLeadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLeadModalLabel">Add New Lead (Not in Smartlead)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addLeadForm" method="post" action="{{ url_for('lead_management.add_lead') }}">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="first_name">First Name:</label>
+                        <input type="text" name="first_name" id="first_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" name="last_name" id="last_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company_name">Company Name:</label>
+                        <input type="text" name="company_name" id="company_name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="campaign_id">Campaign ID:</label>
+                        <input type="number" name="campaign_id" id="campaign_id" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lead_status">Lead Status:</label>
+                        <select name="lead_status" id="lead_status" class="form-control">
+                            <option value="Interested - Initial Info Requested">Interested - Initial Info Requested</option>
+                            <option value="Interested - Demo Booking Link Sent / Demo Booked">Interested - Demo Booking Link Sent / Demo Booked</option>
+                            <option value="Interested - Awaiting Client Feedback">Interested - Awaiting Client Feedback</option>
+                            <option value="Demo No Show - Rebooking Attempt">Demo No Show - Rebooking Attempt</option>
+                            <option value="Demo Completed - Awaiting Invoice">Demo Completed - Awaiting Invoice</option>
+                            <option value="Demo Completed - Payment Received">Demo Completed - Payment Received</option>
+                            <option value="Lead Follow-Up - Cold Lead">Lead Follow-Up - Cold Lead</option>
+                            <option value="Not Applicable/Not Correct Fit">Not Applicable/Not Correct Fit</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitAddLead">Add Lead</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('submitAddLead').addEventListener('click', function() {
+        document.getElementById('addLeadForm').submit();  // Submit the form inside the modal
+    });
+</script>
+
 {% if leads %}
-    <table>
-        <thead>
-            <tr>
-                <th>Lead ID</th>
-                <th>Email</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Company Name</th>
-                <th>Lead Status</th> <!-- New column added -->
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lead in leads %}
-            <tr>
-                <td>{{ lead.id }}</td>
-                <td><a href="{{ url_for('lead_management.lead_detail', lead_id=lead.id) }}">{{ lead.email }}</a></td> <!-- Link to individual lead page -->
-                <td>{{ lead.first_name }}</td>
-                <td>{{ lead.last_name }}</td>
-                <td>{{ lead.company_name }}</td>
-                <td>{{ lead.lead_status }}</td> <!-- Display lead status -->
-                <td>
-                    <ul>
-                        {% for action in lead.actions %}
-                            <li>{{ action.action_type }}: {{ action.action_state }} ({{ action.action_date.strftime('%Y-%m-%d') if action.action_date else 'N/A' }})</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Scrollable table -->
+    <div style="overflow-y: auto; max-height: 60vh;">  <!-- Adjust height to make table scrollable -->
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Lead ID</th>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Company Name</th>
+                    <th>Lead Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr>
+                    <td>{{ lead.id }}</td>
+                    <td><a href="{{ url_for('lead_management.lead_detail', lead_id=lead.id) }}">{{ lead.email }}</a></td>
+                    <td>{{ lead.first_name }}</td>
+                    <td>{{ lead.last_name }}</td>
+                    <td>{{ lead.company_name }}</td>
+                    <td>{{ lead.lead_status }}</td>
+                    <td>
+                        <ul>
+                            {% for action in lead.actions %}
+                                <li>{{ action.action_type }}: {{ action.action_state }} ({{ action.action_date.strftime('%Y-%m-%d') if action.action_date else 'N/A' }})</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% else %}
     <p>No leads found.</p>
 {% endif %}
+
 {% endblock %}
