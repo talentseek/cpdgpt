@@ -7,14 +7,23 @@
     <!-- Lead Profile Card -->
     <div class="col-md-4">
         <div class="card card-profile">
-            <!-- SmartLead Button -->
-            {% if lead.is_in_smartlead %}
-                <div class="view-profile">
-                    <a href="https://app.smartlead.ai/app/lead/{{ lead.sl_lead_id }}/view" target="_blank" class="btn btn-secondary w-100">
-                        View in SmartLead
-                    </a>
-                </div>
-            {% endif %}
+{% if lead.sl_lead_id %}
+    <div class="view-profile">
+        <button type="button" class="btn btn-secondary w-100" onclick="openSmartLeadAndNewWindow('{{ lead.sl_lead_id }}', '{{ lead.id }}')">
+            View in SmartLead + Message Helper
+        </button>
+    </div>
+{% endif %}
+
+<script>
+    function openSmartLeadAndNewWindow(leadId, leadDbId) {
+        // Open SmartLead in a new tab
+        window.open('https://app.smartlead.ai/app/lead/' + leadId + '/view', '_blank');
+
+        // Open the message helper in a new window
+        window.open('/message_helper/' + leadDbId, '_blank', 'width=600,height=400,menubar=no,toolbar=no,location=no,status=no');
+    }
+</script>
             <div class="card-body">
                 <div class="user-profile text-center">
                     <div class="name">{{ lead.first_name }} {{ lead.last_name }}</div>

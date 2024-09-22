@@ -112,6 +112,17 @@ def lead_detail(lead_id):
 
     return render_template('lead_detail.html', lead=lead)
 
+    # Fetch the associated client based on the campaign and client relationship
+    client = Client.query.join(Campaign).filter(Campaign.id == lead.campaign_id).first()
+    
+    if not client:
+        client_name = "No Client Found"
+    else:
+        client_name = client.business_name
+
+    # Render the message_helper.html template with the client name
+    return render_template('message_helper.html', client_name=client_name)
+
 # Route to mark an action as complete
 @lead_management_blueprint.route('/complete_action/<int:action_id>', methods=['POST'])
 def complete_action(action_id):

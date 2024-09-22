@@ -5,24 +5,26 @@
 {% block content %}
 <!-- Add New Lead Button -->
 <div class="row">
-<div class="col-md-6">
-<div class="text-end mt-3">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLeadModal">
-        Add New Lead
-    </button>
+    <div class="col-md-6">
+        <div class="text-end mt-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLeadModal">
+                Add New Lead
+            </button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <!-- Display All Leads Button -->
+        <div class="text-end mt-3">
+            <a href="{{ url_for('lead_management.display_stored_leads') }}" class="btn btn-secondary">Display All Leads</a>
+        </div>
+    </div>
 </div>
-</div>
-<div class="col-md-6">
-<!-- Display All Leads Button -->
-<div class="text-end mt-3">
-    <a href="{{ url_for('lead_management.display_stored_leads') }}" class="btn btn-secondary">Display All Leads</a>
-</div>
-</div>
-</div>
+
+<!-- Filter Leads Form -->
 <form action="{{ url_for('lead_management.filter_leads') }}" method="get" class="mb-4">
-    <div class="row">
+    <div class="row align-items-end">
         <!-- Client Name Dropdown -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 <label for="client_name">Client Name:</label>
                 <select name="client_name" id="client_name" class="form-control">
@@ -34,7 +36,7 @@
             </div>
         </div>
         <!-- Lead Status Dropdown -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 <label for="lead_status">Lead Status:</label>
                 <select name="lead_status" id="lead_status" class="form-control">
@@ -50,9 +52,10 @@
                 </select>
             </div>
         </div>
-    </div>
-    <div class="text-end mt-3">
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
+        <!-- Apply Filters Button -->
+        <div class="col-md-4 text-end">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
     </div>
 </form>
 
@@ -117,7 +120,7 @@
 
 {% if leads %}
     <!-- Scrollable table -->
-    <div style="overflow-y: auto; max-height: 60vh;">  <!-- Adjust height to make table scrollable -->
+    <div style="overflow-y: auto; max-height: 80vh;">  <!-- Increased max-height to make more of the table visible -->
         <table class="table table-striped mt-4">
             <thead>
                 <tr>

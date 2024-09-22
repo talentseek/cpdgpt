@@ -6,21 +6,37 @@
 <h1>Actions</h1>
 
 <!-- Navigation for All Actions, Due Today, Overdue, and Upcoming -->
-<nav class="action-nav">
-    <ul class="nav nav-pills mb-3">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('lead_management.all_actions') }}">All Actions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('lead_management.due_today') }}">Due Today</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('lead_management.overdue') }}">Overdue</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('lead_management.upcoming') }}">Upcoming</a>
-        </li>
-    </ul>
+<nav class="action-nav mb-3">
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('lead_management.all_actions') }}">All Actions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('lead_management.due_today') }}">Due Today</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('lead_management.overdue') }}">Overdue</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('lead_management.upcoming') }}">Upcoming</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-4 text-end">
+            <!-- Filter by Action State Dropdown -->
+            <form action="" method="get" class="d-inline">
+                <div class="form-group">
+                    <select name="action_state" class="form-select" onchange="this.form.submit()">
+                        <option value="" disabled selected>Filter by State</option>
+                        <option value="To do">To do</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
 </nav>
 
 <!-- Table displaying actions -->

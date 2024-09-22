@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message Helper</title>
+</head>
+<body>
+    <h1>Message Helper for {{ client_name }}</h1>
+
+    <h2>SDRs</h2>
+    {% if sdrs %}
+        <ul>
+        {% for sdr in sdrs %}
+            <li>{{ sdr.first_name }} {{ sdr.last_name }} ({{ sdr.title }}), Email: {{ sdr.email }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No SDRs found for this client.</p>
+    {% endif %}
+
+    <h2>More Information</h2>
+    {% if more_information %}
+        <ul>
+        {% for info in more_information %}
+            <li>{{ info.info_type }}: <a href="{{ info.link }}">{{ info.link }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No additional information found for this client.</p>
+    {% endif %}
+
+    <h2>Case Studies</h2>
+    {% if case_studies %}
+        <ul>
+        {% for study in case_studies %}
+            <li>{{ study.title }}: <a href="{{ study.link }}">{{ study.link }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No case studies found for this client.</p>
+    {% endif %}
+</body>
+</html>

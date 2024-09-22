@@ -9,6 +9,7 @@ from app.blueprints.lead_management import lead_management_blueprint
 from app.blueprints.client_management import client_management_blueprint
 from app.blueprints.campaign_management import campaign_management_blueprint
 from app.blueprints.knowledge_base import knowledge_base_blueprint
+from app.blueprints.message_helper import message_helper_blueprint
 from app.config import Config
 
 def create_app():
@@ -29,5 +30,6 @@ def create_app():
     app.register_blueprint(client_management_blueprint)
     app.register_blueprint(campaign_management_blueprint)
     app.register_blueprint(knowledge_base_blueprint)
+    app.register_blueprint(message_helper_blueprint)
 
     return app
